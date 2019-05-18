@@ -12,7 +12,7 @@ const leader =  UInt8('>')
 const newline = UInt8('\n')             #  ABCDEFGHIJKLMNOPQRSTUVWXYZ      abcdefghijklmnopqrstuvwxyz
 const complement_hasharr = Vector{UInt8}(" TVGH  CD  M KN   YSAABW R       TVGH  CD  M KN   YSAABW R")
 
-complement(charbyte::UInt8)  = complement_hasharr[charbyte - 0x3f]
+complement(charbyte::UInt8)  = @inbounds complement_hasharr[charbyte - 0x3f]
 
 function reversemap!(f,v::AbstractVector{UInt8}, s=first(LinearIndices(v)), n=last(LinearIndices(v)))
     r = n
