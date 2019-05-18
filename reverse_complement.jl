@@ -3,9 +3,9 @@
 #
 # Implementation by Olof Salberger.
 #
-# Mostly written to cut down on memory usage & unnecessary copies, 
-# while also being an order of magnitude speedup over current
-# benchmarks game implementation.
+# Mostly written to cut down on memory usage & unnecessary copies 
+# without sacrificing readability, while also being an order of magnitude
+# speedup over current benchmarks game implementation.
 
 #                                         ABCDEFGHIJKLMNOPQRSTUVWXYZ      abcdefghijklmnopqrstuvwxyz
 const complement_hasharr = Vector{UInt8}("TVGH  CD  M KN   YSAABW R       TVGH  CD  M KN   YSAABW R")
