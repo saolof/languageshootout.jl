@@ -8,31 +8,11 @@
 # fastest current implementation.
 # May contribute another version with space-time tradeoffs in favor of speed.
 
-using MacroTools: postwalk  # For convenience macro.
-
-macro turnintobytes(expression)  # Replaces all Char literals in an expression with byte literals.
-   postwalk(x -> x isa Char ? UInt8(x) : x, expression)
-end
-
 const leader =  UInt8('>')
-const newline = UInt8('\n')
-const revcompdata = @turnintobytes Dict(
-   'A'=> 'T', 'a'=> 'T',
-   'C'=> 'G', 'c'=> 'G',
-   'G'=> 'C', 'g'=> 'C',
-   'T'=> 'A', 't'=> 'A',
-   'U'=> 'A', 'u'=> 'A',
-   'M'=> 'K', 'm'=> 'K',
-   'R'=> 'Y', 'r'=> 'Y',
-   'W'=> 'W', 'w'=> 'W',
-   'S'=> 'S', 's'=> 'S',
-   'Y'=> 'R', 'y'=> 'R',
-   'K'=> 'M', 'k'=> 'M',
-   'V'=> 'B', 'v'=> 'B',
-   'H'=> 'D', 'h'=> 'D',
-   'D'=> 'H', 'd'=> 'H',
-   'B'=> 'V', 'b'=> 'V',
-   'N'=> 'N', 'n'=> 'N')
+const newline = UInt8('\n')             #  ABCDEFGHIJKLMNOPQRSTUVWXYZ      abcdefghijklmnopqrstuvwxyz
+const complement_hasharr = Vector{UInt8}(" TVGH  CD  M KN   YSAABW R       TVGH  CD  M KN   YSAABW R")
+
+complement(charbyte::UInt8)  = complement_hasharr[charbyte - 0x3f]
 
 function reversemap!(f,v::AbstractVector{UInt8}, s=first(LinearIndices(v)), n=last(LinearIndices(v)))
     r = n
@@ -60,7 +40,7 @@ function reversemap!(f,v::AbstractVector{UInt8}, s=first(LinearIndices(v)), n=la
     return v
 end
 
-reversecomplement!(block) = reversemap!(x->revcompdata[x],block)
+reversecomplement!(block) = reversemap!(complement, block)
 
 function main(;instream = stdin, outstream = stdout)
    while !eof(instream)
