@@ -3,28 +3,22 @@
 #
 # Implementation by Olof Salberger.
 #
-# Optimized mainly to show off low memory usage while being 
-# a reasonable speed improvement over the 
-# fastest current implementation.
-# May contribute another version with space-time tradeoffs in favor of speed.
+# Mostly written to cut down on memory usage & unnecessary copies, 
+# while also being an order of magnitude speedup over current
+# benchmarks game implementation.
 
-const leader =  UInt8('>')
-const newline = UInt8('\n')             #  ABCDEFGHIJKLMNOPQRSTUVWXYZ      abcdefghijklmnopqrstuvwxyz
-const complement_hasharr = Vector{UInt8}(" TVGH  CD  M KN   YSAABW R       TVGH  CD  M KN   YSAABW R")
-
-complement(charbyte::UInt8)  = @inbounds complement_hasharr[charbyte - 0x3f]
+#                                         ABCDEFGHIJKLMNOPQRSTUVWXYZ      abcdefghijklmnopqrstuvwxyz
+const complement_hasharr = Vector{UInt8}("TVGH  CD  M KN   YSAABW R       TVGH  CD  M KN   YSAABW R")
+complement(charbyte::UInt8)  = @inbounds complement_hasharr[charbyte - 0x40]
 
 function reversemap!(f,v::AbstractVector{UInt8}, s=first(LinearIndices(v)), n=last(LinearIndices(v)))
     r = n
     i = s
-    if v[r] == leader       #
-      r-=1                  #
-    end                     #
     @inbounds while true
-        if v[i] == newline  # If-cases break usefulness of this as a generic function,
-           i+=1             # but handle all the newlines and > characters without 
-        end                 # any unnecessary array copies or hardcoded line widths.
-        if v[r] == newline  #
+        while v[i] < 0x41   # Breaks utility as a generic function,
+           i+=1             # but makes it skip non-alphabetic
+        end                 # characters without introducing
+        while v[r] < 0x41   # unnecessary copies or extra passes.
            r-=1             #
         end                 #
         if i >= r
@@ -40,13 +34,14 @@ function reversemap!(f,v::AbstractVector{UInt8}, s=first(LinearIndices(v)), n=la
     return v
 end
 
-reversecomplement!(block) = reversemap!(complement, block)
+reversecomplement!(block) = reversemap!(complement,block)
 
 function main(;instream = stdin, outstream = stdout)
+   readuntil(instream,UInt8('>'))
    while !eof(instream)
-      header = readuntil(instream,newline)
+      header = readuntil(instream,UInt8('\n'))
       body = readuntil(instream,UInt8('>'))
-      write(outstream, header)
+      write(outstream,UInt8('>'),header,UInt8('\n'))
       write(outstream,reversecomplement!(body))
    end
 end
