@@ -15,8 +15,8 @@ function reversemap!(f,v::AbstractVector{UInt8}, s=first(LinearIndices(v)), n=la
         while v[i] < 0x41   # Breaks utility as a generic function,
            i+=1             # but makes it skip non-alphabetic
         end                 # characters without introducing
-        while v[r] < 0x41   # unnecessary copies or extra passes.
-           r-=1             #
+        while v[r] < 0x41   # unnecessary copies or extra passes
+           r-=1             # and without hardcoded line widths.
         end                 #
         if i >= r
            break
