@@ -1,2 +1,3 @@
 # languageshootout.jl
-implementations of the language shootout for the Julia programming language.
+Personal repository for the implementation of some benchmarks for the The Computer Language
+Benchmarks Game, in the Julia programming language.
