@@ -1,6 +1,3 @@
-# The Computer Language Benchmarks Game
-# https://salsa.debian.org/benchmarksgame-team/benchmarksgame/
-#
 # Implementation by Olof Salberger.
 #
 # Mostly written to cut down on memory usage & unnecessary copies 
